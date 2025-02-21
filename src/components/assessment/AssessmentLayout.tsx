@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ChevronDown, ChevronRight, ChevronLeft, Workflow } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import RFPFramework from './content/implementation/aor-partner/RFPFramework';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
@@ -25,6 +24,11 @@ interface MainArea {
     secondary: string;
     accent: string;
   };
+}
+
+// Define type for navigation pages
+interface NavigationPages {
+  [key: string]: React.FC;
 }
 
 const mainAreas: MainArea[] = [
@@ -60,161 +64,49 @@ const navigation: NavigationItem[] = [
   }
 ];
 
-// Update the component mapping
-const componentMap: { [key: string]: React.ComponentType<any> } = {
-  'rfp-framework': RFPFramework,
-  'agency-stabilization': AgencyStabilization,
-  'progress-measurement': ProgressMeasurement,
-  'data-quality-framework': DataQualityFramework,
-};
-
 const AssessmentLayout: React.FC = () => {
   const [activeArea, setActiveArea] = useState<string>('implementation');
   const [activeTab, setActiveTab] = useState('rfp-framework');
 
-  useEffect(() => {
-    // Get the content area element
-    const contentArea = document.querySelector('.content-area');
-    if (contentArea) {
-      contentArea.scrollTop = 0;
-    }
-  }, [activeTab]); // This will run whenever activeTab changes
-
-  const flattenNavigation = useCallback(() => {
-    return navigation.flatMap(section => 
-      section.children?.flatMap(item => {
-        if (item.children && item.children.length > 0) {
-          return [item, ...item.children];
-        }
-        return item;
-      }) || []
-    );
-  }, []);
-
-  const findCurrentIndex = useCallback(() => {
-    const flatNav = flattenNavigation();
-    return flatNav.findIndex(item => item.id === activeTab);
-  }, [activeTab, flattenNavigation]);
-
-  const navigatePages = useCallback((direction: 'prev' | 'next') => {
-    const flatNav = flattenNavigation();
-    const currentIndex = findCurrentIndex();
-    const newIndex = direction === 'next' 
-      ? Math.min(currentIndex + 1, flatNav.length - 1)
-      : Math.max(currentIndex - 1, 0);
-    
-    if (flatNav[newIndex]) {
-      handleTabChange(flatNav[newIndex].id);
-    }
-  }, [findCurrentIndex, flattenNavigation]);
-
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
+  const navigatePages: NavigationPages = {
+    'rfp-framework': RFPFramework,
+    'agency-stabilization': AgencyStabilization,
+    'progress-measurement': ProgressMeasurement,
+    'data-quality-framework': DataQualityFramework
   };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case 'ArrowRight':
-          navigatePages('next');
-          break;
-        case 'ArrowLeft':
-          navigatePages('prev');
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [navigatePages]);
-
-  const handleSectionClick = (sectionId: string): void => {
-    // Implementation can be added when needed
-    console.log('Section clicked:', sectionId);
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
   };
 
-  const renderContent = () => {
-    console.log('Current activeSection:', activeTab);
-    const Component = componentMap[activeTab];
-    if (Component) {
-      return <Component />;
-    }
-    return null;
-  };
-
-  const getCurrentPath = () => {
-    // Reset path for each calculation
-    const path: { title: string; id: string }[] = [];
-    
-    // Find the current section and item
-    for (const section of navigation) {
-      const currentItem = section.children?.find(item => item.id === activeTab);
-      
-      if (currentItem) {
-        // We found the matching item, add both section and item to path
-        path.push({ title: section.title, id: section.id });
-        path.push({ title: currentItem.title, id: currentItem.id });
-        break; // Exit loop once we've found our path
-      }
-    }
-
-    return path;
-  };
-
-  // Update area and reset navigation state
   const handleAreaClick = (areaId: string): void => {
     setActiveArea(areaId);
   };
 
-  // Update getCurrentTheme to be more specific
-  const getCurrentTheme = (id: string): { primary: string; secondary: string; accent: string } => {
-    const area = configMainAreas.find((a: Area) => a.id === id);
-    return area?.theme || configMainAreas[0].theme;
-  };
-
-  // Update the theme classes based on current area
-  const getThemeClasses = (areaId: string) => {
-    const area = mainAreas.find(a => a.id === areaId);
-    const isActive = activeArea === areaId;
+  const getCurrentPath = () => {
+    const path: { title: string; id: string }[] = [];
     
-    if (!area) return '';
-
-    // Map area IDs to specific Tailwind classes to ensure they're included in the build
-    const themeMap = {
-      'implementation': {
-        active: 'bg-amber-100 text-amber-900 border-b-[3px] border-amber-600 shadow-sm',
-        hover: 'hover:text-amber-700 hover:bg-amber-50'
+    // Find the current section and item
+    for (const section of navigation) {
+      if (section.children) {
+        for (const item of section.children) {
+          if (item.children) {
+            const currentItem = item.children.find(subItem => subItem.id === activeTab);
+            if (currentItem) {
+              path.push({ title: section.title, id: section.id });
+              path.push({ title: item.title, id: item.id });
+              path.push({ title: currentItem.title, id: currentItem.id });
+              break;
+            }
+          }
+        }
       }
-    } as const;
-
-    if (areaId !== 'implementation') {
-      return isActive ? '' : 'text-gray-600';
     }
-
-    return isActive
-      ? themeMap.implementation.active
-      : `text-gray-600 ${themeMap.implementation.hover}`;
+    
+    return path;
   };
 
-  // Get icon color classes based on area
-  const getIconClasses = (areaId: string) => {
-    const isActive = activeArea === areaId;
-    const themeMap = {
-      'implementation': { 
-        active: 'text-amber-600', 
-        hover: 'group-hover:text-amber-500' 
-      }
-    } as const;
-
-    if (areaId !== 'implementation') {
-      return isActive ? 'text-gray-600' : 'text-gray-400';
-    }
-
-    return isActive
-      ? themeMap.implementation.active
-      : `text-gray-400 ${themeMap.implementation.hover}`;
-  };
+  const ActiveComponent = navigatePages[activeTab] || RFPFramework;
 
   return (
     <div className="flex flex-col h-screen">
@@ -243,38 +135,11 @@ const AssessmentLayout: React.FC = () => {
             Sandler Digital Advisory
           </div>
         </div>
-
-        {/* Enhanced main area navigation */}
-        <div className="flex px-6 gap-2 border-t bg-gray-50 pt-2">
-          {mainAreas.map((area) => (
-            <button
-              key={area.id}
-              onClick={() => handleAreaClick(area.id)}
-              className={`
-                flex items-center gap-2 px-6 py-3 
-                text-sm font-medium rounded-t-lg 
-                transition-all duration-200 ease-in-out
-                ${getThemeClasses(area.id)}
-              `}
-            >
-              <area.icon className={`h-5 w-5 ${getIconClasses(area.id)}`} />
-              {area.title}
-            </button>
-          ))}
-        </div>
       </header>
 
-      {/* Main content area with theme context */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <div 
-          className={`
-            transition-all duration-300 ease-in-out
-            border-r bg-white overflow-y-auto
-            w-72
-          `}
-        >
-          {/* Updated sidebar navigation content */}
+        <div className="w-72 border-r bg-white overflow-y-auto">
           {navigation
             .filter(section => section.id === activeArea)
             .map((section) => (
@@ -282,38 +147,22 @@ const AssessmentLayout: React.FC = () => {
                 <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-300">
                   {section.children?.map((item) => (
                     <div key={item.id}>
-                      <button
-                        onClick={() => handleTabChange(item.children?.[0]?.id || item.id)}
-                        className={`
-                          w-full text-left px-4 py-2 text-sm font-bold text-gray-800 bg-gray-100 hover:bg-gray-200 transition-colors
-                          ${activeTab === item.id
-                            ? 'bg-amber-50 text-amber-600 font-medium'
-                            : 'text-gray-600'
-                          }
-                        `}
-                      >
-                        {item.title}
-                      </button>
-                      {item.children && (
-                        <div className="ml-4 space-y-1 border-l-2 border-gray-200">
-                          {item.children.map((subItem) => (
-                            <button
-                              key={subItem.id}
-                              onClick={() => handleTabChange(subItem.id)}
-                              className={`
-                                w-full text-left px-4 py-2 text-sm
-                                hover:bg-gray-50 transition-colors
-                                ${activeTab === subItem.id
-                                  ? 'bg-amber-50 text-amber-600 font-medium'
-                                  : 'text-gray-600'
-                                }
-                              `}
-                            >
-                              {subItem.title}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      {item.children?.map((subItem) => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => handleTabChange(subItem.id)}
+                          className={`
+                            w-full text-left px-4 py-2 text-sm
+                            hover:bg-gray-50 transition-colors
+                            ${activeTab === subItem.id
+                              ? 'bg-amber-50 text-amber-600 font-medium'
+                              : 'text-gray-600'
+                            }
+                          `}
+                        >
+                          {subItem.title}
+                        </button>
+                      ))}
                     </div>
                   ))}
                 </div>
@@ -321,7 +170,7 @@ const AssessmentLayout: React.FC = () => {
             ))}
         </div>
 
-        {/* Main content with themed elements */}
+        {/* Main content */}
         <div className="flex-1 overflow-auto">
           {/* Breadcrumb */}
           <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b z-10">
@@ -345,25 +194,7 @@ const AssessmentLayout: React.FC = () => {
 
           {/* Content */}
           <div className="p-6">
-            {renderContent()}
-          </div>
-          
-          {/* Navigation buttons */}
-          <div className="fixed bottom-8 right-8 flex gap-2">
-            <button
-              onClick={() => navigatePages('prev')}
-              className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-              disabled={findCurrentIndex() === 0}
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-600" />
-            </button>
-            <button
-              onClick={() => navigatePages('next')}
-              className="p-2 bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors"
-              disabled={findCurrentIndex() === navigation.flatMap(s => s.children).length - 1}
-            >
-              <ChevronRight className="h-6 w-6 text-gray-600" />
-            </button>
+            <ActiveComponent />
           </div>
         </div>
       </div>
