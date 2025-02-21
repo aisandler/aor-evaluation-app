@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { CheckCircle2, AlertTriangle, BarChart2, Target, Calendar } from 'lucide-react';
+import { CheckCircle2, BarChart2, Target, Calendar } from 'lucide-react';
 
-const ProgressMeasurement = () => {
+const ProgressMeasurement: React.FC = () => {
   const executionMetrics = {
     analytics: {
       title: "Analytics Implementation",

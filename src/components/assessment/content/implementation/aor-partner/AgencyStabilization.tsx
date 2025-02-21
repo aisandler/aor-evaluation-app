@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { AlertTriangle, CheckCircle2, Calendar, TrendingUp, BarChart2, FileText } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, TrendingUp, BarChart2 } from 'lucide-react';
 
-const AgencyStabilization = () => {
+const AgencyStabilization: React.FC = () => {
   const workstreams = {
     measurement: {
       title: "Analytics & Measurement Framework",

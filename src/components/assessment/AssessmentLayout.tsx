@@ -31,11 +31,11 @@ const mainAreas: MainArea[] = [
   {
     id: 'implementation',
     title: 'AOR Partner Evaluation',
-    icon: Workflow,
+    icon: () => null,
     theme: {
-      primary: 'amber',
-      secondary: 'yellow',
-      accent: 'orange'
+      primary: 'amber-600',
+      secondary: 'amber-100',
+      accent: 'amber-900'
     }
   }
 ];
@@ -71,9 +71,6 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
 const AssessmentLayout: React.FC = () => {
   const [activeArea, setActiveArea] = useState<string>('implementation');
   const [activeTab, setActiveTab] = useState('rfp-framework');
-  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
-    'implementation': true
-  });
 
   useEffect(() => {
     // Get the content area element
@@ -132,8 +129,9 @@ const AssessmentLayout: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [navigatePages]);
 
-  const handleSectionClick = (event: React.MouseEvent<HTMLDivElement>): void => {
-    // Implementation if needed
+  const handleSectionClick = (sectionId: string): void => {
+    // Implementation can be added when needed
+    console.log('Section clicked:', sectionId);
   };
 
   const renderContent = () => {
@@ -169,7 +167,7 @@ const AssessmentLayout: React.FC = () => {
     setActiveArea(areaId);
   };
 
-  // Update getCurrentTheme to use the Area type
+  // Update getCurrentTheme to be more specific
   const getCurrentTheme = (id: string): { primary: string; secondary: string; accent: string } => {
     const area = configMainAreas.find((a: Area) => a.id === id);
     return area?.theme || configMainAreas[0].theme;

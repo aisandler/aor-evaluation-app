@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Shield, AlertTriangle, CheckCircle2, Settings, FileText, BarChart2, RefreshCw } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle2, Settings, RefreshCw } from 'lucide-react';
 
-const DataQualityFramework = () => {
+const DataQualityFramework: React.FC = () => {
   const frameworkComponents = {
     configuration: {
       title: "Configuration Standards",
