@@ -1,4 +1,4 @@
-interface Area {
+export interface Area {
   id: string;
   title: string;
   theme: {

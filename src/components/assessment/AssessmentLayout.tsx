@@ -6,7 +6,7 @@ import RFPFramework from './content/implementation/aor-partner/RFPFramework';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
 import ProgressMeasurement from './content/implementation/aor-partner/ProgressMeasurement';
 import DataQualityFramework from './content/implementation/aor-partner/DataQualityFramework';
-import { mainAreas } from '../../lib/assessment/areas';
+import { mainAreas as configMainAreas, Area } from '@/lib/assessment/areas';
 
 // Add interface for navigation items
 interface NavigationItem {
@@ -169,10 +169,10 @@ const AssessmentLayout: React.FC = () => {
     setActiveArea(areaId);
   };
 
-  // Update getCurrentTheme to return the correct type
+  // Update getCurrentTheme to use the Area type
   const getCurrentTheme = (id: string): { primary: string; secondary: string; accent: string } => {
-    const area = mainAreas.find(a => a.id === id);
-    return area?.theme || mainAreas[0].theme;
+    const area = configMainAreas.find((a: Area) => a.id === id);
+    return area?.theme || configMainAreas[0].theme;
   };
 
   // Update the theme classes based on current area
