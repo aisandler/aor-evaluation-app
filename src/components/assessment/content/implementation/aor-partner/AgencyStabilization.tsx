@@ -6,40 +6,30 @@ const AgencyStabilization: React.FC = () => {
   const workstreams = {
     measurement: {
       title: "Analytics & Measurement Framework",
-      phase: "Week 1-2 (2/17 - 3/1)",
+      phase: "Week 1-2 (2/24 - 3/7)",
       initiatives: [
         {
           title: "Data Quality Remediation",
           description: "Deploy proper analytics filtering and establish clean reporting baseline",
           deliverables: [
-            "Bot filtering implementation",
-            "Proper conversion tracking setup",
-            "Data quality validation framework",
-            "Clean reporting templates"
+            "Bot filtering / bad traffic remediation",
+            "Conversion & event tracking validation / setup",
+            "GTM Audit and Tagging Validation",
+            "GA Configuration Audit",
           ],
           owner: "AWG Analytics Team",
           dependencies: "Access to all brand properties"
         },
         {
-          title: "Cross-Platform Integration",
-          description: "Establish proper tracking across Magento, Salesforce, and GA4",
-          deliverables: [
-            "Integration requirements documentation",
-            "Tracking implementation plan",
-            "Testing protocol development",
-            "Performance validation framework"
-          ],
-          owner: "AWG Technical Team",
-          dependencies: "Platform documentation"
-        },
-        {
           title: "Attribution Modeling",
           description: "Implement comprehensive attribution across channels",
           deliverables: [
-            "Attribution model definition",
-            "Cross-channel tracking setup",
-            "Lead source documentation",
-            "Revenue tracking implementation"
+            "Attribution model mapping",
+            "Cross-channel tracking setup / validation",
+            "Multi-channel attribution validation",
+            "Lead source tracking",
+            "Full journey attribution validation",
+            "Campaign attribution validation"
           ],
           owner: "AWG Analytics Lead",
           dependencies: "Clean data baseline"
@@ -48,16 +38,18 @@ const AgencyStabilization: React.FC = () => {
     },
     campaigns: {
       title: "Campaign Architecture",
-      phase: "Week 2-3 (3/4 - 3/15)",
+      phase: "Week 1 - 2  (2/24 - 3/7)",
       initiatives: [
         {
-          title: "Campaign Structure",
-          description: "Implement proper campaign architecture across all brands",
+          title: "Media & Campaign Planning",
+          description: "Implement campaign architecture and strategy across all brands (where applicable)",
           deliverables: [
-            "Campaign naming convention",
-            "Budget allocation framework",
-            "Performance tracking setup",
-            "Optimization protocol"
+            "Strategy Development & Alignment",
+            "Goal Setting",
+            "Establishing Monthly, Quarterly, and Yearly Campaign Planning",
+            "Budget allocation framework / Flow Chart Management",
+            "Performance tracking criteria and framework",
+            "Test & Learn Framework"
           ],
           owner: "AWG Campaign Team",
           dependencies: "Brand guidelines"
@@ -90,7 +82,7 @@ const AgencyStabilization: React.FC = () => {
     },
     reporting: {
       title: "Reporting Framework",
-      phase: "Week 3-4 (3/18 - 3/29)",
+      phase: "Week 1-2 (2/24 - 3/7)",
       initiatives: [
         {
           title: "Dashboard Development",
@@ -105,7 +97,7 @@ const AgencyStabilization: React.FC = () => {
           dependencies: "Clean data streams"
         },
         {
-          title: "Performance Reporting",
+          title: "Performance Reportin Process",
           description: "Establish regular performance reporting cadence",
           deliverables: [
             "Weekly report template",
@@ -139,27 +131,27 @@ const AgencyStabilization: React.FC = () => {
         <CardHeader>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-gray-600" />
-            <CardTitle className="text-xl font-medium">Agency Stabilization Plan</CardTitle>
+            <CardTitle className="text-xl font-medium">eCommerce Stabilization Plan</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="font-medium text-gray-900 mb-2">Analytics Foundation</div>
+              <div className="font-medium text-gray-900 mb-2">Analytics & Measurement Framework</div>
               <div className="text-sm text-gray-600">
                 Proper implementation of tracking and filtering required to enable accurate 
                 performance measurement and optimization.
               </div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="font-medium text-gray-900 mb-2">Campaign Structure</div>
+              <div className="font-medium text-gray-900 mb-2">Media Campaign Management & Strategy</div>
               <div className="text-sm text-gray-600">
                 Clear campaign architecture and measurement framework needed across all brands 
                 to ensure proper performance tracking and optimization.
               </div>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="font-medium text-gray-900 mb-2">Reporting Integration</div>
+              <div className="font-medium text-gray-900 mb-2">Reporting Framework</div>
               <div className="text-sm text-gray-600">
                 Comprehensive reporting framework required to demonstrate value and enable 
                 data-driven optimization across channels.

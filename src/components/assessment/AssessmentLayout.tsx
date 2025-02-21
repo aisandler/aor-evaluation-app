@@ -26,9 +26,9 @@ const navigation: NavigationItem[] = [
         title: "Project Components",
         id: "project-components",
         children: [
-          { title: "Agency Stabilization", id: "agency-stabilization" },
-          { title: "Progress Measurement", id: "progress-measurement" },
-          { title: "Data Quality Framework", id: "data-quality-framework" }
+          { title: "eCommerce Stabilization Agenda", id: "agency-stabilization" },
+          { title: "Progress Measurement (WIP - For Alignment)", id: "progress-measurement" },
+          { title: "Data Quality Framework (WIP - For Alignment)", id: "data-quality-framework" }
         ]
       }
     ]
