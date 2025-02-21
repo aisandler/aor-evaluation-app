@@ -6,6 +6,7 @@ import RFPFramework from './content/implementation/aor-partner/RFPFramework';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
 import ProgressMeasurement from './content/implementation/aor-partner/ProgressMeasurement';
 import DataQualityFramework from './content/implementation/aor-partner/DataQualityFramework';
+import { mainAreas } from '../../lib/assessment/areas';
 
 // Add interface for navigation items
 interface NavigationItem {
@@ -68,12 +69,11 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
 };
 
 const AssessmentLayout: React.FC = () => {
-  const [activeArea, setActiveArea] = useState('implementation');
+  const [activeArea, setActiveArea] = useState<string>('implementation');
   const [activeTab, setActiveTab] = useState('rfp-framework');
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     'implementation': true
   });
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     // Get the content area element
@@ -132,24 +132,8 @@ const AssessmentLayout: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [navigatePages]);
 
-  const handleSectionClick = (section: any) => {
-    // Check if section is currently collapsed
-    const isCollapsed = !expandedSections[section.id];
-    
-    // Only navigate if we're expanding a collapsed section
-    if (isCollapsed) {
-      // Add null check for children array
-      const firstChildId = section.children?.[0]?.id;
-      if (firstChildId) {
-        handleTabChange(firstChildId);
-      }
-    }
-    
-    // Toggle section expansion
-    setExpandedSections(prev => ({
-      ...prev,
-      [section.id]: !prev[section.id]
-    }));
+  const handleSectionClick = (event: React.MouseEvent<HTMLDivElement>): void => {
+    // Implementation if needed
   };
 
   const renderContent = () => {
@@ -181,33 +165,13 @@ const AssessmentLayout: React.FC = () => {
   };
 
   // Update area and reset navigation state
-  const handleAreaChange = (areaId: string) => {
+  const handleAreaClick = (areaId: string): void => {
     setActiveArea(areaId);
-    // Find the first available tab in the new area
-    const area = navigation.find(n => n.id === areaId);
-    
-    // Get the first available content tab, drilling down through nested children if necessary
-    let firstTab = '';
-    if (area?.children?.[0]) {
-      const firstChild = area.children[0];
-      // If the first child has children, use its first child's id
-      if (firstChild.children?.[0]) {
-        firstTab = firstChild.children[0].id;
-      } else {
-        firstTab = firstChild.id;
-      }
-    } else {
-      firstTab = areaId;
-    }
-    
-    setActiveTab(firstTab);
-    // Expand only the new area's section
-    setExpandedSections({ [areaId]: true });
   };
 
-  // Get current theme based on active area
-  const getCurrentTheme = () => {
-    const area = mainAreas.find(a => a.id === activeArea);
+  // Update getCurrentTheme to return the correct type
+  const getCurrentTheme = (id: string): { primary: string; secondary: string; accent: string } => {
+    const area = mainAreas.find(a => a.id === id);
     return area?.theme || mainAreas[0].theme;
   };
 
@@ -287,7 +251,7 @@ const AssessmentLayout: React.FC = () => {
           {mainAreas.map((area) => (
             <button
               key={area.id}
-              onClick={() => handleAreaChange(area.id)}
+              onClick={() => handleAreaClick(area.id)}
               className={`
                 flex items-center gap-2 px-6 py-3 
                 text-sm font-medium rounded-t-lg 
