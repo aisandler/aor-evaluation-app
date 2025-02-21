@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { CheckCircle2, BarChart2, Target, Calendar } from 'lucide-react';
+import { CheckCircle2, BarChart2, Target, Calendar, StickyNote } from 'lucide-react';
 
 interface DeliverableStatus {
   [key: string]: {
@@ -8,6 +8,10 @@ interface DeliverableStatus {
       [key: string]: boolean;
     };
   };
+}
+
+interface Notes {
+  [key: string]: string;
 }
 
 const ProgressMeasurement: React.FC = () => {
@@ -23,10 +27,34 @@ const ProgressMeasurement: React.FC = () => {
     return {};
   });
 
+  // State for tracking notes
+  const [notes, setNotes] = useState<Notes>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('workstreamNotes');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    }
+    return {};
+  });
+
   // Save to localStorage when status changes
   useEffect(() => {
     localStorage.setItem('deliverableStatus', JSON.stringify(deliverableStatus));
   }, [deliverableStatus]);
+
+  // Save notes to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('workstreamNotes', JSON.stringify(notes));
+  }, [notes]);
+
+  // Handle note changes
+  const handleNoteChange = (streamId: string, value: string) => {
+    setNotes(prev => ({
+      ...prev,
+      [streamId]: value
+    }));
+  };
 
   // Calculate progress for a workstream
   const calculateProgress = (streamId: string) => {
@@ -359,6 +387,22 @@ const ProgressMeasurement: React.FC = () => {
                   </div>
                 </div>
               ))}
+              
+              {/* Notes Section */}
+              <div className="mt-6 border-t pt-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <StickyNote className="w-4 h-4 text-gray-600" />
+                  <div className="font-medium text-gray-900">Notes</div>
+                </div>
+                <textarea
+                  value={notes[streamId] || ''}
+                  onChange={(e) => handleNoteChange(streamId, e.target.value)}
+                  placeholder="Add notes for this workstream..."
+                  className="w-full min-h-[100px] p-3 rounded-lg border border-gray-300 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+                    text-sm text-gray-600 resize-y"
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
