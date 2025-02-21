@@ -37,7 +37,7 @@ const AgencyStabilization: React.FC = () => {
       ]
     },
     campaigns: {
-      title: "Campaign Architecture",
+      title: "Media Campaign Management & Strategy",
       phase: "Week 1 - 2  (2/24 - 3/7)",
       initiatives: [
         {
@@ -146,7 +146,7 @@ const AgencyStabilization: React.FC = () => {
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="font-medium text-gray-900 mb-2">Media Campaign Management & Strategy</div>
               <div className="text-sm text-gray-600">
-                Clear campaign architecture and measurement framework needed across all brands 
+                Clear ecture and measurement framework needed across all brands 
                 to ensure proper performance tracking and optimization.
               </div>
             </div>
