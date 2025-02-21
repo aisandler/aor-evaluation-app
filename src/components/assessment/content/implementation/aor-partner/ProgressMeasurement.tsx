@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { CheckCircle2, BarChart2, Target, Calendar, StickyNote } from 'lucide-react';
+import { CheckCircle2, BarChart2, Target, StickyNote } from 'lucide-react';
 
 interface DeliverableStatus {
   [key: string]: {
