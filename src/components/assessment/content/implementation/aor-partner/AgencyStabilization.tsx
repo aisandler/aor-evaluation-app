@@ -16,9 +16,7 @@ const AgencyStabilization: React.FC = () => {
             "Conversion & event tracking validation / setup",
             "GTM Audit and Tagging Validation",
             "GA Configuration Audit",
-          ],
-          owner: "AWG Analytics Team",
-          dependencies: "Access to all brand properties"
+          ]
         },
         {
           title: "Attribution Modeling",
@@ -30,9 +28,7 @@ const AgencyStabilization: React.FC = () => {
             "Lead source tracking",
             "Full journey attribution validation",
             "Campaign attribution validation"
-          ],
-          owner: "AWG Analytics Lead",
-          dependencies: "Clean data baseline"
+          ]
         }
       ]
     },
@@ -50,9 +46,7 @@ const AgencyStabilization: React.FC = () => {
             "Budget allocation framework / Flow Chart Management",
             "Performance tracking criteria and framework",
             "Test & Learn Framework"
-          ],
-          owner: "AWG Campaign Team",
-          dependencies: "Brand guidelines"
+          ]
         },
         {
           title: "Performance Optimization",
@@ -62,9 +56,7 @@ const AgencyStabilization: React.FC = () => {
             "Weekend campaign activation",
             "Budget reallocation plan",
             "Performance monitoring setup"
-          ],
-          owner: "AWG Performance Team",
-          dependencies: "Clean analytics data"
+          ]
         },
         {
           title: "Channel Strategy",
@@ -74,9 +66,7 @@ const AgencyStabilization: React.FC = () => {
             "Performance benchmarks",
             "Growth opportunities",
             "Investment framework"
-          ],
-          owner: "AWG Strategy Team",
-          dependencies: "Performance baseline"
+          ]
         }
       ]
     },
@@ -92,21 +82,17 @@ const AgencyStabilization: React.FC = () => {
             "Dashboard templates",
             "Automated reporting setup",
             "Stakeholder views"
-          ],
-          owner: "AWG Analytics Team",
-          dependencies: "Clean data streams"
+          ]
         },
         {
-          title: "Performance Reportin Process",
+          title: "Performance Reporting Process",
           description: "Establish regular performance reporting cadence",
           deliverables: [
             "Weekly report template",
             "Monthly deep dive format",
             "Quarterly review framework",
             "Annual planning template"
-          ],
-          owner: "AWG Account Team",
-          dependencies: "Dashboard completion"
+          ]
         },
         {
           title: "Optimization Framework",
@@ -116,9 +102,7 @@ const AgencyStabilization: React.FC = () => {
             "Testing framework",
             "Performance triggers",
             "Action planning template"
-          ],
-          owner: "AWG Performance Team",
-          dependencies: "Reporting framework"
+          ]
         }
       ]
     }
@@ -146,7 +130,7 @@ const AgencyStabilization: React.FC = () => {
             <div className="bg-gray-50 p-4 rounded-lg">
               <div className="font-medium text-gray-900 mb-2">Media Campaign Management & Strategy</div>
               <div className="text-sm text-gray-600">
-                Clear ecture and measurement framework needed across all brands 
+                Clear architecture and measurement framework needed across all brands 
                 to ensure proper performance tracking and optimization.
               </div>
             </div>
@@ -179,20 +163,10 @@ const AgencyStabilization: React.FC = () => {
             <div className="space-y-6">
               {stream.initiatives.map((initiative, idx) => (
                 <div key={idx} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+                  <div className="flex flex-col gap-4 mb-4">
                     <div>
                       <div className="font-medium text-gray-900">{initiative.title}</div>
                       <div className="text-sm text-gray-600 mt-1">{initiative.description}</div>
-                    </div>
-                    <div className="flex flex-col gap-2 text-sm min-w-[200px]">
-                      <div className="bg-white p-2 rounded">
-                        <span className="text-gray-500">Owner:</span>
-                        <span className="ml-2 text-gray-900">{initiative.owner}</span>
-                      </div>
-                      <div className="bg-white p-2 rounded">
-                        <span className="text-gray-500">Dependencies:</span>
-                        <span className="ml-2 text-gray-900">{initiative.dependencies}</span>
-                      </div>
                     </div>
                   </div>
                   <div className="grid gap-2">
