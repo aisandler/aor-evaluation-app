@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
 import ProgressMeasurement from './content/implementation/aor-partner/ProgressMeasurement';
@@ -20,12 +19,12 @@ interface NavigationPages {
 // Update the navigation structure
 const navigation: NavigationItem[] = [
   {
-    title: "AOR Partner Evaluation",
+    title: "Implementation",
     id: "implementation",
     children: [
       {
-        title: "AOR Partner Evaluation",
-        id: "aor-partner",
+        title: "Project Components",
+        id: "project-components",
         children: [
           { title: "Agency Stabilization", id: "agency-stabilization" },
           { title: "Progress Measurement", id: "progress-measurement" },
@@ -48,29 +47,6 @@ const AssessmentLayout: React.FC = () => {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-  };
-
-  const getCurrentPath = () => {
-    const path: { title: string; id: string }[] = [];
-    
-    // Find the current section and item
-    for (const section of navigation) {
-      if (section.children) {
-        for (const item of section.children) {
-          if (item.children) {
-            const currentItem = item.children.find(subItem => subItem.id === activeTab);
-            if (currentItem) {
-              path.push({ title: section.title, id: section.id });
-              path.push({ title: item.title, id: item.id });
-              path.push({ title: currentItem.title, id: currentItem.id });
-              break;
-            }
-          }
-        }
-      }
-    }
-    
-    return path;
   };
 
   const ActiveComponent = navigatePages[activeTab] || AgencyStabilization;
@@ -139,26 +115,6 @@ const AssessmentLayout: React.FC = () => {
 
         {/* Main content */}
         <div className="flex-1 overflow-auto">
-          {/* Breadcrumb */}
-          <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b z-10">
-            <div className="px-6 py-3 flex items-center gap-2 text-sm">
-              {getCurrentPath().map((item, index) => (
-                <React.Fragment key={item.id}>
-                  {index > 0 && (
-                    <ChevronRight className="h-4 w-4 text-gray-400" />
-                  )}
-                  <span className={
-                    index === getCurrentPath().length - 1 
-                      ? "font-medium text-gray-900"
-                      : "text-gray-500"
-                  }>
-                    {item.title}
-                  </span>
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-
           {/* Content */}
           <div className="p-6">
             <ActiveComponent />
