@@ -1,294 +1,368 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CheckCircle2, BarChart2, Target, Calendar } from 'lucide-react';
 
+interface DeliverableStatus {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: boolean;
+    };
+  };
+}
+
 const ProgressMeasurement: React.FC = () => {
-  const executionMetrics = {
-    analytics: {
-      title: "Analytics Implementation",
-      weight: 40,
-      milestones: [
+  // State for tracking deliverable completion
+  const [deliverableStatus, setDeliverableStatus] = useState<DeliverableStatus>(() => {
+    // Try to load from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('deliverableStatus');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    }
+    return {};
+  });
+
+  // Save to localStorage when status changes
+  useEffect(() => {
+    localStorage.setItem('deliverableStatus', JSON.stringify(deliverableStatus));
+  }, [deliverableStatus]);
+
+  // Calculate progress for a workstream
+  const calculateProgress = (streamId: string) => {
+    const stream = workstreams[streamId as keyof typeof workstreams];
+    if (!stream) return 0;
+    
+    let total = 0;
+    let completed = 0;
+    
+    stream.initiatives.forEach((initiative, initiativeIdx) => {
+      initiative.deliverables.forEach((_, deliverableIdx) => {
+        total++;
+        if (deliverableStatus[streamId]?.[initiativeIdx.toString()]?.[deliverableIdx.toString()]) {
+          completed++;
+        }
+      });
+    });
+    
+    return total === 0 ? 0 : Math.round((completed / total) * 100);
+  };
+
+  // Calculate progress for an initiative
+  const calculateInitiativeProgress = (streamId: string, initiativeId: string) => {
+    const stream = workstreams[streamId as keyof typeof workstreams];
+    if (!stream) return 0;
+    
+    const initiative = stream.initiatives[parseInt(initiativeId)];
+    if (!initiative) return 0;
+    
+    const total = initiative.deliverables.length;
+    let completed = 0;
+    
+    initiative.deliverables.forEach((_, idx) => {
+      if (deliverableStatus[streamId]?.[initiativeId]?.[idx.toString()]) {
+        completed++;
+      }
+    });
+    
+    return total === 0 ? 0 : Math.round((completed / total) * 100);
+  };
+
+  // Toggle deliverable status
+  const toggleDeliverable = (streamId: string, initiativeId: string, deliverableId: string) => {
+    setDeliverableStatus(prev => {
+      const newStatus = JSON.parse(JSON.stringify(prev)); // Deep clone to ensure proper state update
+      if (!newStatus[streamId]) newStatus[streamId] = {};
+      if (!newStatus[streamId][initiativeId]) newStatus[streamId][initiativeId] = {};
+      
+      // Toggle the specific deliverable
+      const currentValue = newStatus[streamId][initiativeId][deliverableId];
+      newStatus[streamId][initiativeId][deliverableId] = !currentValue;
+      
+      return newStatus;
+    });
+  };
+
+  // Toggle all deliverables in an initiative
+  const toggleAllInInitiative = (streamId: string, initiativeId: string, deliverables: string[]) => {
+    setDeliverableStatus(prev => {
+      const newStatus = JSON.parse(JSON.stringify(prev)); // Deep clone to ensure proper state update
+      if (!newStatus[streamId]) newStatus[streamId] = {};
+      if (!newStatus[streamId][initiativeId]) newStatus[streamId][initiativeId] = {};
+      
+      // Check if all are currently checked
+      const allChecked = deliverables.every((_, idx) => 
+        newStatus[streamId]?.[initiativeId]?.[idx.toString()]
+      );
+      
+      // Toggle all deliverables in the initiative
+      deliverables.forEach((_, idx) => {
+        newStatus[streamId][initiativeId][idx.toString()] = !allChecked;
+      });
+      
+      return newStatus;
+    });
+  };
+
+  const workstreams = {
+    measurement: {
+      title: "Analytics & Measurement Framework",
+      phase: "Week 1-2 (2/24 - 3/7)",
+      initiatives: [
         {
-          task: "Bot Filtering Implementation",
-          weight: 25,
-          checkpoints: [
-            "Filter configuration complete",
-            "Testing validation complete",
-            "Documentation delivered",
-            "Live implementation verified"
+          title: "Data Quality Remediation",
+          description: "Deploy proper analytics filtering and establish clean reporting baseline",
+          deliverables: [
+            "Bot filtering / bad traffic remediation",
+            "Conversion & event tracking validation / setup",
+            "GTM Audit and Tagging Validation",
+            "GA Configuration Audit"
           ]
         },
         {
-          task: "Cross-Platform Tracking",
-          weight: 45,
-          checkpoints: [
-            "GA4 configuration optimized",
-            "Magento integration complete",
-            "Salesforce tracking implemented",
-            "Cross-platform validation complete"
-          ]
-        },
-        {
-          task: "Attribution Setup",
-          weight: 30,
-          checkpoints: [
-            "Model configuration complete",
-            "Lead source tracking active",
-            "Revenue attribution validated",
-            "Reporting templates created"
+          title: "Attribution Modeling",
+          description: "Implement comprehensive attribution across channels",
+          deliverables: [
+            "Attribution model mapping",
+            "Cross-channel tracking setup / validation",
+            "Multi-channel attribution validation",
+            "Lead source tracking",
+            "Full journey attribution validation",
+            "Campaign attribution validation"
           ]
         }
       ]
     },
     campaigns: {
-      title: "Campaign Optimization",
-      weight: 35,
-      milestones: [
+      title: "Media Campaign Management & Strategy",
+      phase: "Week 1-2 (2/24 - 3/7)",
+      initiatives: [
         {
-          task: "Campaign Architecture",
-          weight: 40,
-          checkpoints: [
-            "Structure documentation complete",
-            "Brand hierarchy established",
-            "Budget framework defined",
-            "Implementation verified"
+          title: "Media & Campaign Planning",
+          description: "Implement campaign architecture and strategy across all brands",
+          deliverables: [
+            "Strategy Development & Alignment",
+            "Goal Setting",
+            "Monthly, Quarterly, and Yearly Campaign Planning",
+            "Budget allocation framework / Flow Chart Management",
+            "Performance tracking criteria and framework",
+            "Test & Learn Framework"
           ]
         },
         {
-          task: "Performance Optimization",
-          weight: 35,
-          checkpoints: [
-            "Branded search revised",
-            "Weekend campaigns active",
-            "Budget reallocation complete",
-            "Performance tracking live"
+          title: "Performance Optimization",
+          description: "Address immediate campaign performance issues",
+          deliverables: [
+            "Branded search restructure",
+            "Weekend campaign activation",
+            "Budget reallocation plan",
+            "Performance monitoring setup"
           ]
         },
         {
-          task: "LinkedIn Exploration",
-          weight: 25,
-          checkpoints: [
-            "Strategy framework defined",
-            "Audience analysis complete",
-            "Test campaign structured",
-            "Measurement plan created"
+          title: "Channel Strategy",
+          description: "Develop comprehensive channel strategy",
+          deliverables: [
+            "Channel assessment",
+            "Performance benchmarks",
+            "Growth opportunities",
+            "Investment framework"
           ]
         }
       ]
     },
     reporting: {
       title: "Reporting Framework",
-      weight: 25,
-      milestones: [
+      phase: "Week 1-2 (2/24 - 3/7)",
+      initiatives: [
         {
-          task: "Dashboard Development",
-          weight: 40,
-          checkpoints: [
-            "KPI framework defined",
-            "Templates created",
-            "Automation configured",
-            "Stakeholder views live"
+          title: "Dashboard Development",
+          description: "Create comprehensive reporting dashboard suite",
+          deliverables: [
+            "KPI framework definition",
+            "Dashboard templates",
+            "Automated reporting setup",
+            "Stakeholder views"
           ]
         },
         {
-          task: "Performance Reporting",
-          weight: 35,
-          checkpoints: [
-            "Brand reporting active",
-            "Revenue tracking live",
-            "Lead reporting configured",
-            "Attribution visible"
+          title: "Performance Reporting Process",
+          description: "Establish regular performance reporting cadence",
+          deliverables: [
+            "Weekly report template",
+            "Monthly deep dive format",
+            "Quarterly review framework",
+            "Annual planning template"
           ]
         },
         {
-          task: "Executive Insights",
-          weight: 25,
-          checkpoints: [
-            "Strategic dashboard live",
-            "ROI visualization active",
-            "Trend analysis enabled",
-            "Action recommendations flowing"
+          title: "Optimization Framework",
+          description: "Develop data-driven optimization process",
+          deliverables: [
+            "Optimization protocol",
+            "Testing framework",
+            "Performance triggers",
+            "Action planning template"
           ]
         }
       ]
     }
   };
 
-  const performanceMetrics = {
-    revenue: {
-      title: "Revenue Performance",
-      metrics: [
-        {
-          name: "E-commerce Revenue",
-          definition: "Total revenue from digital channels",
-          frequency: "Weekly",
-          source: "GA4 + Magento"
-        },
-        {
-          name: "Average Order Value",
-          definition: "Average revenue per transaction",
-          frequency: "Weekly",
-          source: "GA4 + Magento"
-        },
-        {
-          name: "Revenue by Brand",
-          definition: "Revenue split across active brands",
-          frequency: "Weekly",
-          source: "GA4 + Magento"
-        }
-      ]
-    },
-    acquisition: {
-      title: "Lead Generation",
-      metrics: [
-        {
-          name: "Lead Volume",
-          definition: "Total qualified leads generated",
-          frequency: "Weekly",
-          source: "Salesforce"
-        },
-        {
-          name: "Lead Source Attribution",
-          definition: "Lead distribution by channel",
-          frequency: "Weekly",
-          source: "GA4 + Salesforce"
-        },
-        {
-          name: "Cost per Lead",
-          definition: "Investment required per lead",
-          frequency: "Weekly",
-          source: "GA4 + Ad Platforms"
-        }
-      ]
-    },
-    efficiency: {
-      title: "Channel Efficiency",
-      metrics: [
-        {
-          name: "Channel ROAS",
-          definition: "Return on ad spend by channel",
-          frequency: "Weekly",
-          source: "GA4 + Ad Platforms"
-        },
-        {
-          name: "Conversion Rate",
-          definition: "Leads/sales per session",
-          frequency: "Weekly",
-          source: "GA4"
-        },
-        {
-          name: "Cost per Conversion",
-          definition: "Investment per conversion",
-          frequency: "Weekly",
-          source: "GA4 + Ad Platforms"
-        }
-      ]
-    }
+  // Calculate overall progress
+  const calculateOverallProgress = () => {
+    let totalDeliverables = 0;
+    let totalCompleted = 0;
+
+    Object.entries(workstreams).forEach(([streamId, stream]) => {
+      stream.initiatives.forEach((initiative, initiativeIdx) => {
+        initiative.deliverables.forEach((_, deliverableIdx) => {
+          totalDeliverables++;
+          if (deliverableStatus[streamId]?.[initiativeIdx.toString()]?.[deliverableIdx.toString()]) {
+            totalCompleted++;
+          }
+        });
+      });
+    });
+
+    return totalDeliverables === 0 ? 0 : Math.round((totalCompleted / totalDeliverables) * 100);
   };
 
   return (
     <div className="space-y-6">
-      {/* Execution Metrics */}
+      {/* Overview Card */}
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-gray-600" />
-            <CardTitle className="text-xl font-medium">Execution Metrics</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {Object.entries(executionMetrics).map(([key, section]) => (
-              <div key={key} className="bg-white rounded-lg border p-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="font-medium text-gray-900">{section.title}</div>
-                  <div className="text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                    Weight: {section.weight}%
-                  </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-gray-600" />
+              <CardTitle className="text-xl font-medium">Progress Measurement Framework</CardTitle>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-gray-600">Overall Progress:</div>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-24 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500 transition-all duration-300"
+                    style={{ width: `${calculateOverallProgress()}%` }}
+                  />
                 </div>
-                <div className="space-y-4">
-                  {section.milestones.map((milestone, idx) => (
-                    <div key={idx} className="border-t pt-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="font-medium">{milestone.task}</div>
-                        <div className="text-sm text-gray-600">
-                          Weight: {milestone.weight}%
-                        </div>
-                      </div>
-                      <div className="grid gap-2">
-                        {milestone.checkpoints.map((checkpoint, cpIdx) => (
-                          <div key={cpIdx} className="flex items-center gap-2">
-                            <CheckCircle2 className="text-gray-400 h-4 w-4" />
-                            <span className="text-sm text-gray-600">{checkpoint}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <span className="text-sm font-medium">{calculateOverallProgress()}%</span>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Business Performance Metrics */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <BarChart2 className="w-5 h-5 text-gray-600" />
-            <CardTitle className="text-xl font-medium">Business Performance Metrics</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-6">
-            {Object.entries(performanceMetrics).map(([key, section]) => (
-              <div key={key} className="bg-white rounded-lg border p-4">
-                <div className="font-medium text-gray-900 mb-4">{section.title}</div>
-                <div className="space-y-4">
-                  {section.metrics.map((metric, idx) => (
-                    <div key={idx} className="border-t pt-4">
-                      <div className="grid gap-2">
-                        <div className="font-medium text-gray-800">{metric.name}</div>
-                        <div className="text-sm text-gray-600">{metric.definition}</div>
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">
-                            Frequency: {metric.frequency}
-                          </span>
-                          <span className="text-gray-500">
-                            Source: {metric.source}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Review Protocol */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-gray-600" />
-            <CardTitle className="text-xl font-medium">Review Protocol</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h3 className="font-medium text-blue-900 mb-2">Weekly Review Protocol</h3>
-            <div className="space-y-2 text-sm text-blue-800">
-              <p>• Implementation progress review every Monday</p>
-              <p>• Performance metric updates every Friday</p>
-              <p>• Stakeholder updates distributed end-of-week</p>
-              <p>• Action items documented and assigned within 24 hours</p>
             </div>
           </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            {Object.entries(workstreams).map(([streamId, { title }]) => (
+              <div key={streamId} className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-medium text-gray-900">{title}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-20 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-green-500 transition-all duration-300"
+                        style={{ width: `${calculateProgress(streamId)}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium">{calculateProgress(streamId)}%</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
+
+      {/* Workstreams */}
+      {Object.entries(workstreams).map(([streamId, stream]) => (
+        <Card key={streamId}>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BarChart2 className="w-5 h-5 text-gray-600" />
+                <CardTitle className="text-xl font-medium">{stream.title}</CardTitle>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-24 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-green-500 transition-all duration-300"
+                      style={{ width: `${calculateProgress(streamId)}%` }}
+                    />
+                  </div>
+                  <span className="text-sm font-medium">{calculateProgress(streamId)}%</span>
+                </div>
+                <div className="text-sm bg-gray-100 px-3 py-1 rounded-full text-gray-600">
+                  {stream.phase}
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {stream.initiatives.map((initiative, initiativeIdx) => (
+                <div key={initiativeIdx} className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex flex-col gap-4 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-gray-900">{initiative.title}</div>
+                        <div className="text-sm text-gray-600 mt-1">{initiative.description}</div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <div className="h-2 w-20 bg-gray-200 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-green-500 transition-all duration-300"
+                              style={{ width: `${calculateInitiativeProgress(streamId, initiativeIdx.toString())}%` }}
+                            />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {calculateInitiativeProgress(streamId, initiativeIdx.toString())}%
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => toggleAllInInitiative(streamId, initiativeIdx.toString(), initiative.deliverables)}
+                          className="text-sm text-gray-500 hover:text-gray-700"
+                        >
+                          Toggle All
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid gap-2">
+                    {initiative.deliverables.map((deliverable, dIdx) => (
+                      <div 
+                        key={dIdx} 
+                        className="flex items-center gap-2 text-sm cursor-pointer"
+                        onClick={() => toggleDeliverable(streamId, initiativeIdx.toString(), dIdx.toString())}
+                      >
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors
+                          ${deliverableStatus[streamId]?.[initiativeIdx.toString()]?.[dIdx.toString()]
+                            ? 'bg-green-500 border-green-500'
+                            : 'border-gray-400 hover:border-gray-600'
+                          }`}
+                        >
+                          {deliverableStatus[streamId]?.[initiativeIdx.toString()]?.[dIdx.toString()] && (
+                            <CheckCircle2 className="w-3 h-3 text-white" />
+                          )}
+                        </div>
+                        <span className={`text-gray-600 ${
+                          deliverableStatus[streamId]?.[initiativeIdx.toString()]?.[dIdx.toString()]
+                            ? 'line-through text-gray-400'
+                            : ''
+                        }`}>
+                          {deliverable}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
