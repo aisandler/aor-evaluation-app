@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import RFPFramework from './content/implementation/aor-partner/RFPFramework';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
 import ProgressMeasurement from './content/implementation/aor-partner/ProgressMeasurement';
 import DataQualityFramework from './content/implementation/aor-partner/DataQualityFramework';
@@ -28,7 +27,6 @@ const navigation: NavigationItem[] = [
         title: "AOR Partner Evaluation",
         id: "aor-partner",
         children: [
-          { title: "RFP Framework", id: "rfp-framework" },
           { title: "Agency Stabilization", id: "agency-stabilization" },
           { title: "Progress Measurement", id: "progress-measurement" },
           { title: "Data Quality Framework", id: "data-quality-framework" }
@@ -40,10 +38,9 @@ const navigation: NavigationItem[] = [
 
 const AssessmentLayout: React.FC = () => {
   const [activeArea] = useState<string>('implementation');
-  const [activeTab, setActiveTab] = useState('rfp-framework');
+  const [activeTab, setActiveTab] = useState('agency-stabilization');
 
   const navigatePages: NavigationPages = {
-    'rfp-framework': RFPFramework,
     'agency-stabilization': AgencyStabilization,
     'progress-measurement': ProgressMeasurement,
     'data-quality-framework': DataQualityFramework
@@ -76,7 +73,7 @@ const AssessmentLayout: React.FC = () => {
     return path;
   };
 
-  const ActiveComponent = navigatePages[activeTab] || RFPFramework;
+  const ActiveComponent = navigatePages[activeTab] || AgencyStabilization;
 
   return (
     <div className="flex flex-col h-screen">
