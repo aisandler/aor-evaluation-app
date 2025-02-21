@@ -5,7 +5,6 @@ import RFPFramework from './content/implementation/aor-partner/RFPFramework';
 import AgencyStabilization from './content/implementation/aor-partner/AgencyStabilization';
 import ProgressMeasurement from './content/implementation/aor-partner/ProgressMeasurement';
 import DataQualityFramework from './content/implementation/aor-partner/DataQualityFramework';
-import { mainAreas as configMainAreas, Area } from '@/lib/assessment/areas';
 
 // Add interface for navigation items
 interface NavigationItem {
@@ -14,35 +13,10 @@ interface NavigationItem {
   children?: NavigationItem[];
 }
 
-// Define the main navigation areas
-interface MainArea {
-  id: string;
-  title: string;
-  icon: React.ElementType;
-  theme: {
-    primary: string;
-    secondary: string;
-    accent: string;
-  };
-}
-
 // Define type for navigation pages
 interface NavigationPages {
   [key: string]: React.FC;
 }
-
-const mainAreas: MainArea[] = [
-  {
-    id: 'implementation',
-    title: 'AOR Partner Evaluation',
-    icon: () => null,
-    theme: {
-      primary: 'amber-600',
-      secondary: 'amber-100',
-      accent: 'amber-900'
-    }
-  }
-];
 
 // Update the navigation structure
 const navigation: NavigationItem[] = [
@@ -65,7 +39,7 @@ const navigation: NavigationItem[] = [
 ];
 
 const AssessmentLayout: React.FC = () => {
-  const [activeArea, setActiveArea] = useState<string>('implementation');
+  const [activeArea] = useState<string>('implementation');
   const [activeTab, setActiveTab] = useState('rfp-framework');
 
   const navigatePages: NavigationPages = {
@@ -77,10 +51,6 @@ const AssessmentLayout: React.FC = () => {
 
   const handleTabChange = (tabId: string) => {
     setActiveTab(tabId);
-  };
-
-  const handleAreaClick = (areaId: string): void => {
-    setActiveArea(areaId);
   };
 
   const getCurrentPath = () => {
