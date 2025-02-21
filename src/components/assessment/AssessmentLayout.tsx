@@ -224,23 +224,34 @@ const AssessmentLayout: React.FC = () => {
         active: 'bg-amber-100 text-amber-900 border-b-[3px] border-amber-600 shadow-sm',
         hover: 'hover:text-amber-700 hover:bg-amber-50'
       }
-    };
+    } as const;
+
+    if (areaId !== 'implementation') {
+      return isActive ? '' : 'text-gray-600';
+    }
 
     return isActive
-      ? themeMap[areaId]?.active || ''
-      : `text-gray-600 ${themeMap[areaId]?.hover || ''}`;
+      ? themeMap.implementation.active
+      : `text-gray-600 ${themeMap.implementation.hover}`;
   };
 
   // Get icon color classes based on area
   const getIconClasses = (areaId: string) => {
     const isActive = activeArea === areaId;
     const themeMap = {
-      'implementation': { active: 'text-amber-600', hover: 'group-hover:text-amber-500' }
-    };
+      'implementation': { 
+        active: 'text-amber-600', 
+        hover: 'group-hover:text-amber-500' 
+      }
+    } as const;
+
+    if (areaId !== 'implementation') {
+      return isActive ? 'text-gray-600' : 'text-gray-400';
+    }
 
     return isActive
-      ? themeMap[areaId]?.active || 'text-gray-600'
-      : `text-gray-400 ${themeMap[areaId]?.hover || ''}`;
+      ? themeMap.implementation.active
+      : `text-gray-400 ${themeMap.implementation.hover}`;
   };
 
   return (
